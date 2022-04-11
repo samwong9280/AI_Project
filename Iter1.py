@@ -1,8 +1,8 @@
 
-from tkinter import Y
 import constraint
 from constraint import *
 import random
+
 
 
 class Wordle():
@@ -23,7 +23,6 @@ class Wordle():
         # x=self.prob.getSolutions()
         #print(x)
 
-        self.playGameAlg()
 
         
         #read in all possible solutions
@@ -50,7 +49,7 @@ class Wordle():
             if(len(x)==5):
                 self.words.append(x)
         print(str(len(self.words)) + " remain after eliminating non-5 letter words")
-        
+
     #Testing function, allows player to guess, not intended for anything useful at the moment 
     def playGame(self):
         solution=random.choice(self.solutions)
@@ -69,7 +68,7 @@ class Wordle():
     
     def getFeedback(self,guess,solution):
         #adding in constraints based on feedback from game
-        #for some reason this needed to be hard coded, looping doesn't work too well
+        #for some reason this needed to be hard coded for now, looping doesn't work too well
         g1=guess[0]
         g2=guess[1]
         g3=guess[2]
@@ -128,7 +127,7 @@ class Wordle():
         print("Trying to guess: " + solution)
         pool= self.words
         count=0
-        val = True
+        #val = True
         while(1):
             guess=random.choice(pool)
             print("Guessing : " + guess)
@@ -137,20 +136,25 @@ class Wordle():
                 self.getFeedback(guess,solution)
                 sols= self.prob.getSolutions()
                 pool = self.parseOutput(sols)
-                print(" Left with: " + str(len(pool)))
+                print("Left with: " + str(len(pool)) + " possible choices.")
             else:
                 print("Found answer in: " + str(count) + " tries.")
     
                 break
-        return None
-
-    
+        return count
     
 def main():
-    response = input("Run Wordle Algorithm? (Y/N): ")
+    response = input("Run Wordle Algorithm? (Y/N): Type A if you want to see an average guess # over 100 tries ")
     if(response == "Y" or response =="y"):
         print("Running wordle algorithm")
         init=Wordle()
+        init.playGameAlg()
+    elif(response =="A" or response =="a"):
+        total=0
+        for i in range(100):
+            init=Wordle()
+            total+=init.playGameAlg()
+        print("average # of guesses is: " + str(total/100))
     else:
         return None
 
