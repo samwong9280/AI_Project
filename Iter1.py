@@ -50,7 +50,8 @@ class Wordle():
             if(len(x)==5):
                 self.words.append(x)
         print(str(len(self.words)) + " remain after eliminating non-5 letter words")
-    
+        
+    #Testing function, allows player to guess, not intended for anything useful at the moment 
     def playGame(self):
         solution=random.choice(self.solutions)
         while(1):
@@ -67,7 +68,8 @@ class Wordle():
                 print("Incorrect Guess!")
     
     def getFeedback(self,guess,solution):
-        #Green letter constraint checks
+        #adding in constraints based on feedback from game
+        #for some reason this needed to be hard coded, looping doesn't work too well
         g1=guess[0]
         g2=guess[1]
         g3=guess[2]
@@ -78,26 +80,49 @@ class Wordle():
         s3=solution[2]
         s4=solution[3]
         s5=solution[4]
-
+        #if statements are "green" feedback, so letter is in the right spot
+        #elif statements are "yellow" feedback, so letter is somewhere in the word
+        #else statements are "black" feedback, so letter is not in the word
         if( g1== s1 ):
             self.prob.addConstraint(lambda x: x[0]==g1, "w")
+        elif(g1 in solution):
+            self.prob.addConstraint(lambda x : g1 in x, "w")
+        else: 
+            self.prob.addConstraint(lambda x: g1 not in x, "w")
         if( g2== s2 ):
             self.prob.addConstraint(lambda x: x[1]==g2, "w")
+        elif(g2 in solution):
+            self.prob.addConstraint(lambda x : g2 in x, "w")
+        else: 
+            self.prob.addConstraint(lambda x: g2 not in x, "w")
         if( g3== s3 ):
             self.prob.addConstraint(lambda x: x[2]==g3, "w")
+        elif(g3 in solution):
+            self.prob.addConstraint(lambda x : g3 in x, "w")
+        else: 
+            self.prob.addConstraint(lambda x: g3 not in x, "w")
         if( g4== s4 ):
             self.prob.addConstraint(lambda x: x[3]==g4, "w")
+        elif(g4 in solution):
+            self.prob.addConstraint(lambda x : g4 in x, "w")
+        else: 
+            self.prob.addConstraint(lambda x: g4 not in x, "w")
         if( g5== s5 ):
             self.prob.addConstraint(lambda x: x[4]==g5, "w")
+        elif(g5 in solution):
+            self.prob.addConstraint(lambda x : g5 in x, "w")
+        else: 
+            self.prob.addConstraint(lambda x: g5 not in x, "w")
 
-        #for some reason this needed to be hard coded
-
+    #read solution output into list
+    #this elimates words from the possible list of guesses
     def parseOutput(self,input):
         newPool=[]
         for tup in input:
             newPool.append(tup["w"])
         return newPool
 
+    #simulate playing wordle
     def playGameAlg(self):
         solution = random.choice(self.solutions)
         print("Trying to guess: " + solution)
