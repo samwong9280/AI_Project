@@ -127,16 +127,18 @@ class Wordle():
         print("Trying to guess: " + solution)
         pool= self.words
         count=0
+        guess="crane"
         #val = True
         while(1):
-            guess=random.choice(pool)
             print("Guessing : " + guess)
             count+=1
             if(guess!=solution):
+                #self.prob.addConstraint(lambda x: x!=guess,"w")
                 self.getFeedback(guess,solution)
                 sols= self.prob.getSolutions()
                 pool = self.parseOutput(sols)
                 print("Left with: " + str(len(pool)) + " possible choices.")
+                guess=random.choice(pool)
             else:
                 print("Found answer in: " + str(count) + " tries.")
     
