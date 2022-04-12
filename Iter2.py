@@ -69,11 +69,9 @@ class Wordle():
                 print("Incorrect Guess!")
     
     def getFeedback(self,guess,solution):
-        #Currently this will only allow guesses branching from those with the green letters in the correct spots and yellow letters in the word
-        #this means that it will not make a guess that does not use the information received from the previous guess, which may not be
-        #the most efficient way to guess
-        #instead we should allow a guess or two that we can ignore the green and yellow letters we've found to narrow down our search
-        #domain faster before introducing these constraints to make checks
+        #this iteration should only add black letter constraints for the 1st and 2nd guess, then for the 3rd guess we implement all constraints
+        #this should give us the most optimally culled guess pool
+        #still need a heuristic to pick after this point
         #adding in constraints based on feedback from game
         #for some reason this needed to be hard coded for now, looping doesn't work too well
         g1=guess[0]
