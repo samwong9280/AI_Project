@@ -147,7 +147,6 @@ class Wordle():
                 print("Left with: " + str(len(pool)) + " possible choices.")            
             else:
                 print("Found answer in: " + str(count) + " tries.")
-    
                 break
         return count
     
