@@ -78,7 +78,7 @@ class Wordle():
                 newPool.append(tup["w"])
         return newPool
 
-    def makeGuess(self,pool):
+    def makeGuess(self,pool,count):
         maxScore=999
         curGuess=""
         # for word in pool:
@@ -101,7 +101,7 @@ class Wordle():
             for i in range(len(word)):
                 curScore += self.freqs[word[i]][i]
                 if self.countLtr(word,word[i])>1:
-                    curScore-=1
+                    curScore+=4-count
             if(curScore<maxScore):
                 maxScore=curScore
                 curGuess=word
@@ -124,7 +124,7 @@ class Wordle():
         while(1):
             count+=1
             if(count!=1):
-                guess=self.makeGuess(pool)
+                guess=self.makeGuess(pool,count)
             print("Guessing : " + guess)
             if(guess!=solution):
                 
