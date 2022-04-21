@@ -78,7 +78,7 @@ class Wordle():
                 newPool.append(tup["w"])
         return newPool
 
-    def makeGuess(self,pool):
+    def makeGuess(self,pool,count):
         maxScore=999
         curGuess=""
         # for word in pool:
@@ -100,6 +100,8 @@ class Wordle():
             curScore = 0
             for i in range(len(word)):
                 curScore += self.freqs[word[i]][i]
+                if self.countLtr(word,word[i])>1:
+                    curScore+=4-count
             if(curScore<maxScore):
                 maxScore=curScore
                 curGuess=word
@@ -122,7 +124,7 @@ class Wordle():
         while(1):
             count+=1
             if(count!=1):
-                guess=self.makeGuess(pool)
+                guess=self.makeGuess(pool,count)
             print("Guessing : " + guess)
             if(guess!=solution):
                 
@@ -228,7 +230,7 @@ def main():
     response = input("Run Wordle Algorithm?\nType A if you want to see an average guess # over 100 tries\nType Q to run over all possible solutions (warning takes awhile)\nType Y/N to run once/cancel")
     if(response == "Y" or response =="y"):
         print("Running wordle algorithm")
-        init=Wordle(words,solutions,goal,freqs)
+        init=Wordle(words,solutions,"crier",freqs)
         init.playGameAlg()
     elif(response =="A" or response =="a"):
         total=0
@@ -237,7 +239,14 @@ def main():
             init=Wordle(words,solutions,goal,freqs)
             total+=init.playGameAlg()
         print("average # of guesses is: " + str(total/10))
+    elif(response =="Q" or response =="q"):
+        total=0
+        for word in solutions:
+            init =Wordle(words, solutions, word,freqs)
+            total += init.playGameAlg()
+        print("Average number of guesses over all solutions is: " +str(total/len(solutions)))
     else:
         return None
+
 if __name__=="__main__":
     main()
