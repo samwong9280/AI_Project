@@ -6,12 +6,13 @@ import random
 
 
 class Wordle():
-    def __init__(self,words,solutions,goal):
+    def __init__(self,words,solutions,goal,freqs):
         self.prob = Problem()
         self.vowels=['a','e','i','o','u']
         self.solutions=solutions
         self.words=words
         self.goal=goal
+        self.freqs=freqs
         self.greenLtrIndex=[]
         self.greenLtrs=[]
         self.yellowLtrs=[]
@@ -240,19 +241,73 @@ def genSolutions():
         solutions.append(word.strip())
     return solutions
 
+def getFreqs(words):
+    freqs={'a':[0,0,0,0,0],
+    'b':[0,0,0,0,0],
+    'c':[0,0,0,0,0],
+    'd':[0,0,0,0,0],
+    'e':[0,0,0,0,0],
+    'f':[0,0,0,0,0],
+    'g':[0,0,0,0,0],
+    'h':[0,0,0,0,0],
+    'i':[0,0,0,0,0],
+    'j':[0,0,0,0,0],
+    'k':[0,0,0,0,0],
+    'l':[0,0,0,0,0],
+    'm':[0,0,0,0,0],
+    'n':[0,0,0,0,0],
+    'o':[0,0,0,0,0],
+    'p':[0,0,0,0,0],
+    'q':[0,0,0,0,0],
+    'r':[0,0,0,0,0],
+    's':[0,0,0,0,0],
+    't':[0,0,0,0,0],
+    'u':[0,0,0,0,0],
+    'v':[0,0,0,0,0],
+    'w':[0,0,0,0,0],
+    'x':[0,0,0,0,0],
+    'y':[0,0,0,0,0],
+    'z':[0,0,0,0,0]
+    }
+    #get frequencies store max and min
+    for word in words:
+        for i in range(len(word)):
+            freqs[word[i]][i]+=1
+
+    #get max and min
+    vals=freqs.values()
+    maxF=0
+    minF=0
+    for val in vals:
+        maxF=max(maxF, max(val))
+        minF=min(minF, min(val))
+    
+    #normalize
+    for key in freqs:
+        val = freqs[key]
+        for i in range(len(val)):
+            freqs[key][i]=normalize(freqs[key][i],minF,maxF)
+    return freqs
+    
+        
+def normalize(x, minX, maxX):
+    return (x-minX)/(maxX-minX)
+    
 def main():
     solutions=genSolutions()
     words=genWords(solutions)
+    freqs=getFreqs(words)
+    print(freqs)
     goal=random.choice(solutions)
     response = input("Run Wordle Algorithm?\nType A if you want to see an average guess # over 100 tries\nType Q to run over all possible solutions (warning takes awhile)\nType Y/N to run once/cancel")
     if(response == "Y" or response =="y"):
         print("Running wordle algorithm")
-        init=Wordle(words,solutions,goal)
+        init=Wordle(words,solutions,goal,freqs)
         init.playGameAlg()
     elif(response =="A" or response =="a"):
         total=0
         for i in range(100):
-            init=Wordle(words,solutions,goal)
+            init=Wordle(words,solutions,goal,freqs)
             total+=init.playGameAlg()
         print("average # of guesses is: " + str(total/100))
     else:
