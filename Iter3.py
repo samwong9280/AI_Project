@@ -246,7 +246,7 @@ def main():
         init.playGameAlg()
     elif(response =="A" or response =="a"):
         total=0
-        for i in range(10):
+        for i in range(50):
             goal=random.choice(solutions)
             init=Wordle(words,solutions,goal,freqs)
             total+=init.playGameAlg()
