@@ -96,15 +96,27 @@ class Wordle():
         #     if curScore>maxScore:
         #         maxScore=curScore
         #         curGuess=word
-        for word in pool:
-            curScore = 0
-            for i in range(len(word)):
-                curScore += self.freqs[word[i]][i]
-                if self.countLtr(word,word[i])>1:
-                    curScore+=4-count
-            if(curScore<maxScore):
-                maxScore=curScore
-                curGuess=word
+        if count <3:
+            for word in pool:
+                curScore = 0
+                for i in range(len(word)):
+                    curScore += self.freqs[word[i]][i]
+                    if self.countLtr(word,word[i])>1:
+                        curScore+=4-count
+                if(curScore<maxScore):
+                    maxScore=curScore
+                    curGuess=word
+        else:
+            maxScore=0
+            for word in pool:
+                curScore = 0
+                for i in range(len(word)):
+                    curScore += self.freqs[word[i]][i]
+                    if self.countLtr(word,word[i])>1:
+                        curScore-=4-count
+                if(curScore>maxScore):
+                    maxScore=curScore
+                    curGuess=word
         return curGuess
     
     def countLtr(self,w,l):
@@ -230,7 +242,7 @@ def main():
     response = input("Run Wordle Algorithm?\nType A if you want to see an average guess # over 100 tries\nType Q to run over all possible solutions (warning takes awhile)\nType Y/N to run once/cancel")
     if(response == "Y" or response =="y"):
         print("Running wordle algorithm")
-        init=Wordle(words,solutions,"crier",freqs)
+        init=Wordle(words,solutions,"daunt",freqs)
         init.playGameAlg()
     elif(response =="A" or response =="a"):
         total=0
