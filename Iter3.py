@@ -4,8 +4,6 @@ import constraint
 from constraint import *
 import random
 
-
-
 class Wordle():
     def __init__(self,words,solutions,goal,freqs):
         self.prob = Problem()
@@ -234,10 +232,11 @@ def main():
         init.playGameAlg()
     elif(response =="A" or response =="a"):
         total=0
-        for i in range(100):
+        for i in range(10):
+            goal=random.choice(solutions)
             init=Wordle(words,solutions,goal,freqs)
             total+=init.playGameAlg()
-        print("average # of guesses is: " + str(total/100))
+        print("average # of guesses is: " + str(total/10))
     else:
         return None
 if __name__=="__main__":
