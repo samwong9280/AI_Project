@@ -81,28 +81,13 @@ class Wordle():
     def makeGuess(self,pool,count):
         maxScore=999
         curGuess=""
-        # for word in pool:
-        #     curScore=0
-        #     #check words score against current words score(herusitic) and pick the max of the two
-        #     for ltr in word:
-        #         if ltr not in self.greenLtrs:
-        #             curScore+=1
-        #         if ltr not in self.yellowLtrs:
-        #             curScore+=1
-        #         if self.countLtr(word,ltr)==1:
-        #             curScore+=1
-        #         if ltr in self.vowels:
-        #             curScore+=1
-        #     if curScore>maxScore:
-        #         maxScore=curScore
-        #         curGuess=word
         if count <3:
             for word in pool:
                 curScore = 0
                 for i in range(len(word)):
                     curScore += self.freqs[word[i]][i]
                     if self.countLtr(word,word[i])>1:
-                        curScore+=4-count
+                        curScore+=5-count
                 if(curScore<maxScore):
                     maxScore=curScore
                     curGuess=word
@@ -113,7 +98,7 @@ class Wordle():
                 for i in range(len(word)):
                     curScore += self.freqs[word[i]][i]
                     if self.countLtr(word,word[i])>1:
-                        curScore-=4-count
+                        curScore-=5-count
                 if(curScore>maxScore):
                     maxScore=curScore
                     curGuess=word
@@ -242,7 +227,7 @@ def main():
     response = input("Run Wordle Algorithm?\nType A if you want to see an average guess # over 100 tries\nType Q to run over all possible solutions (warning takes awhile)\nType Y/N to run once/cancel")
     if(response == "Y" or response =="y"):
         print("Running wordle algorithm")
-        init=Wordle(words,solutions,"daunt",freqs)
+        init=Wordle(words,solutions,"wafer",freqs)
         init.playGameAlg()
     elif(response =="A" or response =="a"):
         total=0
