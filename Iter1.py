@@ -6,16 +6,15 @@ import random
 
 
 class Wordle():
-    def __init__(self):
+    def __init__(self,words,solutions,goal):
         self.prob = Problem()
         #self.domain = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n','o','p','q','r','s','t','u','v','w','x','y','z']
         #self.prob.addVariables(["x1","x2","x3","x4","x5",],self.domain)
-        self.solutions=[]
-        self.words=[]
+        self.solutions=solutions
+        self.words=words
+        self.goal=goal
         self.greenLtrs=[]
         self.yellowLtrs=[]
-        self.genSolutions()
-        self.genWords()
         print("Starting with: " + str(len(self.words)) + " possible words")
         self.prob.addVariable("w",self.words)
         # self.prob.addConstraint(lambda x: x in self.words,"w")
@@ -24,33 +23,6 @@ class Wordle():
         # self.prob.addConstraint(lambda x: x[1]=='b',"w")
         # x=self.prob.getSolutions()
         #print(x)
-
-
-        
-        #read in all possible solutions
-    def genSolutions(self):
-        answerFile = open("words.txt","r")
-        data = answerFile.readlines()
-        print("imported " + str(len(data)) + " words from input file")
-        answerFile.close()
-
-        #store all words in array, strip the newline characters off the end of them
-        for word in data:
-            self.solutions.append(word.strip())
-
-    def genWords(self):
-        #read in list of english words
-        wordFile = open("english_words.txt")
-        data = wordFile.readlines()
-        print("imported " + str(len(data)) + " words from english_words.txt")
-        wordFile.close()
-
-        #store all of these stripped words of length 5 in an array
-        for word in data:
-            x=word.strip()
-            if(len(x)==5):
-                self.words.append(x)
-        print(str(len(self.words)) + " remain after eliminating non-5 letter words")
 
     #Testing function, allows player to guess, not intended for anything useful at the moment 
     def playGame(self):
@@ -86,6 +58,7 @@ class Wordle():
         s3=solution[2]
         s4=solution[3]
         s5=solution[4]
+        self.prob.addConstraint(lambda x: x!=guess,"w")
         #if statements are "green" feedback, so letter is in the right spot
         #elif statements are "yellow" feedback, so letter is somewhere in the word
         #else statements are "black" feedback, so letter is not in the word
@@ -132,10 +105,11 @@ class Wordle():
 
     #read solution output into list
     #this elimates words from the possible list of guesses
-    def parseOutput(self,input):
+    def parseOutput(self,input,guess):
         newPool=[]
         for tup in input:
-            newPool.append(tup["w"])
+            if(tup["w"] !=guess):
+                newPool.append(tup["w"])
         return newPool
 
     def makeGuess(self,pool):
@@ -155,41 +129,81 @@ class Wordle():
         return curGuess
     #simulate playing wordle
     def playGameAlg(self):
-        solution = random.choice(self.solutions)
+        solution = self.goal
+        # solution="trait"
         print("Trying to guess: " + solution)
         pool= self.words
         count=0
-        guess="crane"
         #val = True
         while(1):
-            print("Guessing : " + guess)
+            guess=random.choice(pool)
             count+=1
+            print("Guessing : " + guess)
             if(guess!=solution):
                 #self.prob.addConstraint(lambda x: x!=guess,"w")
                 self.getFeedback(guess,solution)
                 sols= self.prob.getSolutions()
-                pool = self.parseOutput(sols)
-                print("Left with: " + str(len(pool)) + " possible choices.")
-                #guess=random.choice(pool)
-                guess=self.makeGuess(pool)
+                pool = self.parseOutput(sols,guess)
+                print("Left with: " + str(len(pool)) + " possible choices.")            
             else:
                 print("Found answer in: " + str(count) + " tries.")
     
                 break
         return count
     
+def genWords(solutions):
+    #read in list of english words
+    words=[]
+    wordFile = open("english_words.txt")
+    data = wordFile.readlines()
+    print("imported " + str(len(data)) + " words from english_words.txt")
+    wordFile.close()
+
+    #store all of these stripped words of length 5 in an array
+    for word in data:
+        x=word.strip()
+        if(len(x)==5):
+            words.append(x)
+    for word in solutions:
+        if word not in words:
+            words.append(word)
+    print(str(len(words)) + " remain after eliminating non-5 letter words")
+    return words
+
+    #read in all possible solutions
+def genSolutions():
+    solutions=[]
+    answerFile = open("words.txt","r")
+    data = answerFile.readlines()
+    print("imported " + str(len(data)) + " words from input file")
+    answerFile.close()
+
+    #store all words in array, strip the newline characters off the end of them
+    for word in data:
+        solutions.append(word.strip())
+    return solutions
+
 def main():
-    response = input("Run Wordle Algorithm? (Y/N): Type A if you want to see an average guess # over 100 tries ")
+    solutions=genSolutions()
+    words=genWords(solutions)
+    goal=random.choice(solutions)
+    response = input("Run Wordle Algorithm?\nType A if you want to see an average guess # over 100 tries\nType Q to run over all possible solutions\nType Y/N to run once/cancel")
     if(response == "Y" or response =="y"):
         print("Running wordle algorithm")
-        init=Wordle()
+        init=Wordle(words,solutions,goal)
         init.playGameAlg()
     elif(response =="A" or response =="a"):
         total=0
         for i in range(100):
-            init=Wordle()
+            init=Wordle(words,solutions,goal)
             total+=init.playGameAlg()
         print("average # of guesses is: " + str(total/100))
+    elif(response =="Q" or response =="q"):
+        total=0
+        for word in solutions:
+            init =Wordle(words, solutions, word)
+            total += init.playGameAlg()
+        print("Average number of guesses over all solutions is: " +str(total/len(solutions)))
     else:
         return None
 

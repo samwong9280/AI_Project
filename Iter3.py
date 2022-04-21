@@ -104,6 +104,7 @@ class Wordle():
                     self.prob.addConstraint(lambda x, l=tup: x[l[1]]==l[0],"w")
                 for ltr in self.yellowLtrs:
                     self.prob.addConstraint(lambda x,l = ltr: l in x, "w")
+                self.prob.addConstraint(lambda x: x in self.solutions,"w")
                 #add in any new found constraints
             if( g1== s1 ):
                 self.greenLtrs.append(g1)
@@ -184,12 +185,11 @@ class Wordle():
 
     #simulate playing wordle
     def playGameAlg(self):
-        solution = self.goal
+        solution=self.goal
         print("Trying to guess: " + solution)
         pool= self.words
         count=0
         guess="crane"
-        #val = True
         while(1):
             count+=1
             if(count!=1):
@@ -244,7 +244,7 @@ def main():
     solutions=genSolutions()
     words=genWords(solutions)
     goal=random.choice(solutions)
-    response = input("Run Wordle Algorithm?\nType A if you want to see an average guess # over 100 tries\nType Q to run over all possible solutions\nType Y/N to run once/cancel")
+    response = input("Run Wordle Algorithm?\nType A if you want to see an average guess # over 100 tries\nType Q to run over all possible solutions (warning takes awhile)\nType Y/N to run once/cancel")
     if(response == "Y" or response =="y"):
         print("Running wordle algorithm")
         init=Wordle(words,solutions,goal)
@@ -255,12 +255,6 @@ def main():
             init=Wordle(words,solutions,goal)
             total+=init.playGameAlg()
         print("average # of guesses is: " + str(total/100))
-    elif(response =="Q" or response =="Q"):
-        total=0
-        for word in solutions:
-            init=Wordle(words,solutions,word)
-            total+=init.playGameAlg()
-        print("average # of guesses is: " + str(total/len(solutions)))
     else:
         return None
 
