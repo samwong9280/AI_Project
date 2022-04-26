@@ -227,24 +227,24 @@ def main():
     words=genWords(solutions)
     freqs=getFreqs(words)
     goal=random.choice(solutions)
-    response = input("Run Wordle Algorithm?\nType A if you want to see an average guess # over 100 tries\nType Q to run over all possible solutions (warning takes awhile)\nType Y/N to run once/cancel")
+    response = input("Run Wordle Algorithm?\nType a number if you want to see an average guess # over that many tries\nType Q to run over all possible solutions (warning takes awhile)\nType Y/N to run once/cancel")
     if(response == "Y" or response =="y"):
         print("Running wordle algorithm")
         init=Wordle(words,solutions,"crier",freqs)
         init.playGameAlg()
-    elif(response =="A" or response =="a"):
-        total=0
-        for i in range(50):
-            goal=random.choice(solutions)
-            init=Wordle(words,solutions,goal,freqs)
-            total+=init.playGameAlg()
-        print("average # of guesses is: " + str(total/10))
     elif(response =="Q" or response =="q"):
         total=0
         for word in solutions:
             init =Wordle(words, solutions, word,freqs)
             total += init.playGameAlg()
         print("Average number of guesses over all solutions is: " +str(total/len(solutions)))
+    elif(isinstance(response,int)):
+        total=0
+        for i in range(response):
+            goal=random.choice(solutions)
+            init=Wordle(words,solutions,goal,freqs)
+            total+=init.playGameAlg()
+        print("average # of guesses is: " + str(total/10))
     else:
         return None
 
